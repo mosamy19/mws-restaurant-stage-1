@@ -6,6 +6,7 @@ var newMap;
  */
 document.addEventListener('DOMContentLoaded', (event) => {  
   initMap();
+  mapInfoTabIndex();
 });
 
 /**
@@ -22,7 +23,7 @@ initMap = () => {
         scrollWheelZoom: false
       });
       L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.jpg70?access_token={mapboxToken}', {
-        mapboxToken: '<your MAPBOX API KEY HERE>',
+        mapboxToken: 'pk.eyJ1IjoibW9zYW15MTkiLCJhIjoiY2pqbGl2c2RuMWhmNzNxcmw1YjBjMmJxMyJ9.TyyCpiw_RSUoocheMBFtGg',
         maxZoom: 18,
         attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, ' +
           '<a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
@@ -89,6 +90,7 @@ fillRestaurantHTML = (restaurant = self.restaurant) => {
   const image = document.getElementById('restaurant-img');
   image.className = 'restaurant-img'
   image.src = DBHelper.imageUrlForRestaurant(restaurant);
+  image.setAttribute("alt",  restaurant.name + " image.")
 
   const cuisine = document.getElementById('restaurant-cuisine');
   cuisine.innerHTML = restaurant.cuisine_type;
@@ -191,4 +193,15 @@ getParameterByName = (name, url) => {
   if (!results[2])
     return '';
   return decodeURIComponent(results[2].replace(/\+/g, ' '));
+}
+
+
+function mapInfoTabIndex() {
+  setTimeout(function() {
+  let mapInfo = document.querySelector(".leaflet-control-attribution.leaflet-control");
+  if(mapInfo) {
+    let mapAncours = mapInfo.querySelectorAll("a");
+    mapAncours.forEach(x => x.tabIndex = -1)
+  }
+}, 2000);
 }

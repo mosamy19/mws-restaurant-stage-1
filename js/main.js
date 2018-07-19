@@ -11,6 +11,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
   initMap(); // added 
   fetchNeighborhoods();
   fetchCuisines();
+  mapInfoTabIndex();
 });
 
 /**
@@ -78,7 +79,7 @@ initMap = () => {
         scrollWheelZoom: false
       });
   L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.jpg70?access_token={mapboxToken}', {
-    mapboxToken: '<your MAPBOX API KEY HERE>',
+    mapboxToken: 'pk.eyJ1IjoibW9zYW15MTkiLCJhIjoiY2pqbGl2c2RuMWhmNzNxcmw1YjBjMmJxMyJ9.TyyCpiw_RSUoocheMBFtGg',
     maxZoom: 18,
     attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, ' +
       '<a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
@@ -157,29 +158,32 @@ fillRestaurantsHTML = (restaurants = self.restaurants) => {
  */
 createRestaurantHTML = (restaurant) => {
   const li = document.createElement('li');
+  const div = document.createElement('div');
 
   const image = document.createElement('img');
   image.className = 'restaurant-img';
   image.src = DBHelper.imageUrlForRestaurant(restaurant);
-  li.append(image);
+  image.setAttribute("alt",  restaurant.name + " image.")
+  div.append(image);
 
   const name = document.createElement('h1');
   name.innerHTML = restaurant.name;
-  li.append(name);
+  div.append(name);
 
   const neighborhood = document.createElement('p');
   neighborhood.innerHTML = restaurant.neighborhood;
-  li.append(neighborhood);
+  div.append(neighborhood);
 
   const address = document.createElement('p');
   address.innerHTML = restaurant.address;
-  li.append(address);
+  div.append(address);
 
   const more = document.createElement('a');
   more.innerHTML = 'View Details';
   more.href = DBHelper.urlForRestaurant(restaurant);
-  li.append(more)
-
+  more.setAttribute("aria-label","View Details for "+ restaurant.name +" restaurant.");
+  div.append(more)
+  li.append(div);
   return li
 }
 
@@ -198,6 +202,21 @@ addMarkersToMap = (restaurants = self.restaurants) => {
   });
 
 } 
+
+function mapInfoTabIndex() {
+  let mapInfo = document.querySelector(".leaflet-control-attribution.leaflet-control");
+  if(mapInfo) {
+    let mapAncours = mapInfo.querySelectorAll("a");
+    mapAncours.forEach(x => x.tabIndex = -1)
+  }
+}
+navigator.serviceWorker.register('/sw.js')
+.then(function() {
+  console.log("Registration worked!")
+}).catch(function() {
+  console.log("Registration failed!");
+});
+
 /* addMarkersToMap = (restaurants = self.restaurants) => {
   restaurants.forEach(restaurant => {
     // Add marker to the map
